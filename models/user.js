@@ -1,6 +1,14 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
+    firstName: {
+        type: String,
+        required: true,
+    },
+    lastName: {
+        type: String,
+        required: true,
+    },
     username: {
         type: String,
         required: true,
@@ -9,6 +17,13 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    role: {
+        type: String,
+        enum: ['Service Desk', 'Requestor'],
+        default: 'Requestor',
+        required: true,
+    },
+    company: { type: mongoose.Schema.Types.ObjectId, ref: 'Company' },
 });
 
 userSchema.set('toJSON', {
@@ -17,4 +32,4 @@ userSchema.set('toJSON', {
     }
 });
 
-module.exports = mongoose.mogel('User', userSchema);
+module.exports = mongoose.model('User', userSchema);
