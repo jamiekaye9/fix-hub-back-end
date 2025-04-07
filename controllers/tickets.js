@@ -8,19 +8,6 @@ router.post('/', verifyToken, async (req, res) => {
         const allTickets = await Ticket.find();
         req.body.number = allTickets.length + 1;
         req.body.openedBy = req.user._id;
-        const serviceDeskUsers = await User.find({ role: 'Service Desk' });
-        if (serviceDeskUsers.length === 0) {
-            return req.body.assignedTo = null;
-        }
-        let leastBusyUser = serviceDeskUsers[0];
-        serviceDeskUsers.forEach(user => {
-            if (user.ticketsAssigned < leastBusyUser.ticketsAssigned) {
-                leastBusyUser = user;
-            }
-        req.body.assignedTo = leastBusyUser._id;
-        leastBusyUser.ticketsAssigned += 1;
-        leastBusyUser.save();
-        });
         const ticket = await Ticket.create(req.body);
         ticket._doc.openedBy = req.user;
         res.status(201).json(ticket);
@@ -130,8 +117,6 @@ router.delete('/:ticketId/comments/:commentId', verifyToken, async (req, res) =>
         res.status(500).json({ e: e.message });
     }
 })
-
-
 
 module.exports = router;
 

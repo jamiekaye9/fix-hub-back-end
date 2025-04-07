@@ -14,6 +14,9 @@ router.post('/sign-up', async (req, res) => {
             return res.status(409).json({e: 'Username already taken.'});
         }
         const user = await User.create({
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            role: req.body.role,
             username: req.body.username,
             hashedPassword: bcrypt.hashSync(req.body.password, saltRounds)
         });

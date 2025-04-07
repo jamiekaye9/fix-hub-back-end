@@ -19,14 +19,10 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['Service Desk', 'Requestor'],
+        enum: ['serviceDesk', 'requestor'],
         default: 'Requestor',
         required: true,
     },
-    ticketsAssigned: {
-        type: Number,
-        default: 0,
-    }
 });
 
 userSchema.set('toJSON', {
