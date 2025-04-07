@@ -23,7 +23,10 @@ const userSchema = new mongoose.Schema({
         default: 'Requestor',
         required: true,
     },
-    company: { type: mongoose.Schema.Types.ObjectId, ref: 'Company' },
+    ticketsAssigned: {
+        type: Number,
+        default: 0,
+    }
 });
 
 userSchema.set('toJSON', {

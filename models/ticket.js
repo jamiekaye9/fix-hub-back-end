@@ -32,25 +32,23 @@ const ticketsSchema = new mongoose.Schema({
         default: 'Open',
         required: true,
     },
-    application: {
+    type: {
         type: String,
+        enum: ['Software', 'Hardware'],
+        default: 'Software',
         required: true,
+    },
+    software: {
+        type: String,
+    },
+    hardware: {
+        type: String,
     },
     openedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     comments: [commentsSchema],
 }, { timestamps: true });
 
-const companySchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-    },
-    hashedPassword: {
-        type: String,
-        required: true,
-    },
-    tickets: [ticketsSchema],
-});
+const Ticket = mongoose.model('Ticket', ticketsSchema);
 
-module.exports = mongoose.model("Company", companySchema);
+module.exports = Ticket;
