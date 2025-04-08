@@ -20,7 +20,7 @@ router.post('/sign-up', async (req, res) => {
             username: req.body.username,
             hashedPassword: bcrypt.hashSync(req.body.password, saltRounds)
         });
-        const payload = { username: user.username, _id: user._id };
+        const payload = { firstName: user.firstName, lastName: user.lastName, role: user.role, username: user.username, _id: user._id };
         const token = jwt.sign({ payload }, process.env.JWT_SECRET);
         res.status(201).json({ token });
     } catch (e) {
@@ -40,7 +40,7 @@ router.post('/sign-in', async (req, res) => {
         if (!isPasswordCorrect) {
             return res.status(401).json({ e: 'Invalid credentials' });
         }
-        const payload = { username: user.username, _id: user._id };
+        const payload = { firstName: user.firstName, lastName: user.lastName, role: user.role, username: user.username, _id: user._id };
         const token = jwt.sign({ payload }, process.env.JWT_SECRET);
         res.status(200).json({ token });
     } catch (e) {
