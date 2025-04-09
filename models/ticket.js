@@ -22,27 +22,25 @@ const ticketsSchema = new mongoose.Schema({
     },
     priority: {
         type: String,
-        enum: ['Low', 'Medium', 'High'],
-        default: 'Low',
+        enum: ['low', 'medium', 'high'],
+        default: 'low',
         required: true,
     },
     status: {
         type: String,
-        enum: ['Open', 'In Progress', 'Resolved', 'Closed'],
+        enum: ['open', 'inProgress', 'resolved', 'closed'],
         default: 'Open',
         required: true,
     },
     type: {
         type: String,
-        enum: ['Software', 'Hardware'],
-        default: 'Software',
+        enum: ['software', 'hardware'],
+        default: 'software',
         required: true,
     },
-    software: {
+    technology: {
         type: String,
-    },
-    hardware: {
-        type: String,
+        required: true,
     },
     openedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },

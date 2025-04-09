@@ -1,13 +1,27 @@
 const express = require('express');
 const verifyToken = require('../middleware/verify-token');
 const Ticket = require('../models/ticket');
+const User = require('../models/user');
+
 const router = express.Router();
 
 router.post('/', verifyToken, async (req, res) => {
     try {
         const allTickets = await Ticket.find();
+        const serviceDesk = await User.find({ role: "serviceDesk" })
+        const ticketCounts = await Promise.all(
+            serviceDesk.map(async (user) => {
+                const count = await Ticket.countDocuments({ assignedTo: user._id });
+                return { user, count };
+            })
+        )
+        const leastBusy = ticketCounts.reduce((min, curr) => {
+            return curr.count < min.count ? curr : min;
+        })
         req.body.number = allTickets.length + 1;
         req.body.openedBy = req.user._id;
+        req.body.status = 'open';
+        req.body.assignedTo = leastBusy.user._id;
         const ticket = await Ticket.create(req.body);
         ticket._doc.openedBy = req.user;
         res.status(201).json(ticket);
@@ -20,7 +34,7 @@ router.get('/', verifyToken, async (req, res) => {
     try {
         const tickets = await Ticket.find({})
           .populate('openedBy', 'assignedTo')
-          .populate({ createdAt: 'desc' })
+          .sort({ createdAt: 'desc' })
         res.status(200).json(tickets);
     } catch (e) {
         res.status(500).json({ e: e.message });
