@@ -19,9 +19,11 @@ router.post('/', verifyToken, async (req, res) => {
             return curr.count < min.count ? curr : min;
         })
         req.body.number = allTickets.length + 1;
-        req.body.openedBy = req.user._id;
+        console.log(assignedTo)
+        console.log(openedBy);
         req.body.status = 'open';
         req.body.assignedTo = leastBusy.user._id;
+        req.body.openedBy = req.user._id;
         const ticket = await Ticket.create(req.body);
         ticket._doc.openedBy = req.user;
         res.status(201).json(ticket);
@@ -33,7 +35,7 @@ router.post('/', verifyToken, async (req, res) => {
 router.get('/', verifyToken, async (req, res) => {
     try {
         const tickets = await Ticket.find({})
-          .populate('openedBy', 'assignedTo')
+          .populate(['openedBy', 'assignedTo'])
           .sort({ createdAt: 'desc' })
         res.status(200).json(tickets);
     } catch (e) {
