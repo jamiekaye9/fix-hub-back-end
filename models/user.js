@@ -20,7 +20,6 @@ const userSchema = new mongoose.Schema({
     role: {
         type: String,
         enum: ['serviceDesk', 'requestor'],
-        default: 'Requestor',
         required: true,
     },
 });

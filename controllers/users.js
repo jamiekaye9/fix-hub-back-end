@@ -6,7 +6,7 @@ const verifyToken = require('../middleware/verify-token');
 
 router.get('/', verifyToken, async (req, res) => {
     try {
-        const users = await User.find({}, 'username');
+        const users = await User.find({}, '-hashedPassword');
         if (!users) {
             return res.status(404).json({ e: 'User not found.' });
         }

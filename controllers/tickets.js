@@ -19,14 +19,14 @@ router.post('/', verifyToken, async (req, res) => {
             return curr.count < min.count ? curr : min;
         })
         req.body.number = allTickets.length + 1;
-        console.log(assignedTo)
-        console.log(openedBy);
         req.body.status = 'open';
         req.body.assignedTo = leastBusy.user._id;
         req.body.openedBy = req.user._id;
         const ticket = await Ticket.create(req.body);
         ticket._doc.openedBy = req.user;
-        res.status(201).json(ticket);
+        const populatedTicket = await Ticket.findById(ticket._id)
+            .populate(['openedBy', 'assignedTo'])
+        res.status(201).json(populatedTicket);
     } catch (e) {
         res.status(500).json({ e: e.message });
     }
@@ -36,6 +36,7 @@ router.get('/', verifyToken, async (req, res) => {
     try {
         const tickets = await Ticket.find({})
           .populate(['openedBy', 'assignedTo'])
+        //   .populate(['assignedTo,'])
           .sort({ createdAt: 'desc' })
         res.status(200).json(tickets);
     } catch (e) {
@@ -66,7 +67,7 @@ router.put('/:ticketId', verifyToken, async (req, res) => {
             req.params.ticketId,
             req.body,
             { new: true}
-        )
+        ) .populate(['openedBy', 'assignedTo']);
         res.status(200).json(updatedTicket);
     } catch (e) {
         res.status(500).json({ e: e.message });
