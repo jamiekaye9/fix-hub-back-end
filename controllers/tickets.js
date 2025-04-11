@@ -59,23 +59,30 @@ router.get("/:ticketId", verifyToken, async (req, res) => {
 });
 
 router.put("/:ticketId", verifyToken, async (req, res) => {
-  try {
-    const ticket = await Ticket.findByIdAndUpdate(req.params.ticketId);
-    if (!ticket.openedBy.equals(req.user._id)) {
-      return res
-        .status(403)
-        .send("You are not authorized to update this ticket");
+    try {
+      const ticket = await Ticket.findById(req.params.ticketId);
+      if (!ticket) {
+        return res.status(404).json("Ticket not found");
+      }
+  
+      if (
+        !ticket.openedBy.equals(req.user._id) &&
+        !ticket.assignedTo.equals(req.user._id)
+      ) {
+        return res.status(403).json("You are not authorized to update this ticket");
+      }
+  
+      const updatedTicket = await Ticket.findByIdAndUpdate(
+        req.params.ticketId,
+        req.body,
+        { new: true }
+      ).populate(["openedBy", "assignedTo"]);
+  
+      res.status(200).json(updatedTicket);
+    } catch (e) {
+      res.status(500).json({ e: e.message });
     }
-    const updatedTicket = await Ticket.findByIdAndUpdate(
-      req.params.ticketId,
-      req.body,
-      { new: true }
-    ).populate(["openedBy", "assignedTo"]);
-    res.status(200).json(updatedTicket);
-  } catch (e) {
-    res.status(500).json({ e: e.message });
-  }
-});
+  });
 
 router.delete("/:ticketId", verifyToken, async (req, res) => {
   try {
