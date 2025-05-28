@@ -29,6 +29,8 @@ app.use("/test-jwt", testJwtRouter);
 app.use("/users", usersRouter);
 app.use("/tickets", ticketsRouter);
 
+PORT = process.env.PORT || 3000;
+
 app.listen(3000, () => {
   console.log("The express app is ready");
 });
